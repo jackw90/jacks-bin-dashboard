@@ -4,9 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Brentwood Bin Day</title>
+  <title>Jack's Bin Dashboard</title>
   <style>
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       padding: 24px 16px;
@@ -14,14 +15,18 @@
       color: #172332;
       font-family: Arial, sans-serif;
     }
+
     main { max-width: 560px; margin: auto; }
+
     h1 { margin: 4px 0 22px; font-size: 34px; }
+
     .eyebrow {
       font-size: 12px;
       letter-spacing: 2px;
       color: #64748b;
       font-weight: bold;
     }
+
     .card {
       background: white;
       padding: 24px;
@@ -29,14 +34,44 @@
       margin-bottom: 16px;
       box-shadow: 0 3px 14px #1723320a;
     }
-    .date { font-size: 27px; font-weight: bold; margin: 12px 0; }
+
+    .selector-label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    select {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      background: white;
+      color: #172332;
+      font: inherit;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    select:focus {
+      outline: 2px solid #3476d0;
+      outline-offset: 2px;
+    }
+
+    .date {
+      font-size: 27px;
+      font-weight: bold;
+      margin: 12px 0;
+    }
+
     .muted { color: #64748b; font-size: 14px; }
+
     .bins {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
       margin-top: 22px;
     }
+
     .bin {
       padding: 18px 8px;
       border-radius: 12px;
@@ -45,21 +80,44 @@
       font-weight: bold;
       font-size: 13px;
     }
-    .bin span { display: block; font-size: 27px; margin-bottom: 9px; }
+
+    .bin span {
+      display: block;
+      font-size: 27px;
+      margin-bottom: 9px;
+    }
+
     .upcoming {
       border-bottom: 1px solid #e2e8f0;
       padding: 14px 0;
     }
+
     .upcoming:last-child { border: none; }
-    .upcoming strong { display: block; margin-bottom: 6px; }
+
+    .upcoming strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
     #status { text-align: center; padding: 12px; }
     .error { color: #b42318; }
   </style>
 </head>
 <body>
 <main>
-  <div class="eyebrow">BRENTWOOD BIN COLLECTIONS</div>
+  <div class="eyebrow">BIN COLLECTION DASHBOARD</div>
   <h1>♻ Bin Day</h1>
+
+  <section class="card">
+    <label class="eyebrow selector-label" for="property">
+      SELECT PROPERTY
+    </label>
+    <select id="property">
+      <option value="jack">Jack — Brentwood</option>
+      <option value="mark">Mark — Witham</option>
+      <option value="clare">Clare — Runwell</option>
+    </select>
+  </section>
 
   <section class="card">
     <div class="eyebrow">NEXT COLLECTION</div>
@@ -86,6 +144,17 @@ const binStyles = [
   ["Refuse", "🗑", "#414b58", "Refuse"]
 ];
 
+const propertySelect = document.getElementById("property");
+
+try {
+  const saved = localStorage.getItem("selectedProperty");
+  if (["jack", "mark", "clare"].includes(saved)) {
+    propertySelect.value = saved;
+  }
+} catch (error) {
+  // The dashboard still works if storage is unavailable.
+}
+
 function getStyle(type) {
   return binStyles.find(b => type.includes(b[0])) ||
          ["", "🗑", "#64748b", type];
@@ -98,7 +167,9 @@ function parseDate(s) {
 
 function formatDate(s) {
   return parseDate(s).toLocaleDateString("en-GB", {
-    weekday: "long", day: "numeric", month: "long"
+    weekday: "long",
+    day: "numeric",
+    month: "long"
   });
 }
 
@@ -115,17 +186,37 @@ function renderBin(type) {
   return div;
 }
 
+let loadNumber = 0;
+
 async function loadBins() {
+  const currentLoad = ++loadNumber;
+  const property = propertySelect.value;
   const status = document.getElementById("status");
+  const nextDate = document.getElementById("nextDate");
+  const countdown = document.getElementById("countdown");
+  const nextBins = document.getElementById("nextBins");
+  const upcoming = document.getElementById("upcoming");
+
+  status.classList.remove("error");
+  status.textContent = "Loading collection data...";
+  nextDate.textContent = "Loading...";
+  countdown.textContent = "";
+  nextBins.replaceChildren();
+  upcoming.replaceChildren();
 
   try {
     const response = await fetch(
-      "./bins.json?cache=" + Date.now()
+      "./data/" + property + ".json?cache=" + Date.now()
     );
 
-    if (!response.ok) throw new Error("Cannot load bins.json");
+    if (!response.ok) {
+      throw new Error("Cannot load collection data");
+    }
 
     const data = await response.json();
+
+    // Ignore older requests if the property changed.
+    if (currentLoad !== loadNumber) return;
 
     if (!Array.isArray(data.collections)) {
       throw new Error("Invalid collection data");
@@ -148,25 +239,29 @@ async function loadBins() {
     }
 
     const next = dates[0];
+
     const days = Math.round(
-      (parseDate(next) - today) / 86400000
+      (Date.UTC(
+        parseDate(next).getFullYear(),
+        parseDate(next).getMonth(),
+        parseDate(next).getDate()
+      ) - Date.UTC(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate()
+      )) / 86400000
     );
 
-    document.getElementById("nextDate").textContent =
-      formatDate(next);
+    nextDate.textContent = formatDate(next);
 
-    document.getElementById("countdown").textContent =
+    countdown.textContent =
       days === 0 ? "Collection is today!" :
       days === 1 ? "Collection is tomorrow!" :
       days + " days to go";
 
-    const nextBins = document.getElementById("nextBins");
     nextBins.replaceChildren(
       ...grouped[next].map(renderBin)
     );
-
-    const upcoming = document.getElementById("upcoming");
-    upcoming.replaceChildren();
 
     for (const date of dates.slice(1, 5)) {
       const row = document.createElement("div");
@@ -183,16 +278,37 @@ async function loadBins() {
       upcoming.append(row);
     }
 
-    status.textContent = "Schedule updated: " +
-      new Date(data.updated).toLocaleString("en-GB");
+    const updated = new Date(data.updated);
+
+    status.textContent = Number.isNaN(updated.getTime())
+      ? "Collection data loaded"
+      : "Schedule updated: " +
+        updated.toLocaleString("en-GB");
 
   } catch (error) {
-    document.getElementById("nextDate").textContent =
-      "Schedule unavailable";
+    if (currentLoad !== loadNumber) return;
+
+    nextDate.textContent = "Schedule unavailable";
+    countdown.textContent = "";
+    nextBins.replaceChildren();
+    upcoming.replaceChildren();
     status.textContent = error.message;
     status.classList.add("error");
   }
 }
+
+propertySelect.addEventListener("change", () => {
+  try {
+    localStorage.setItem(
+      "selectedProperty",
+      propertySelect.value
+    );
+  } catch (error) {
+    // Saving the selection is optional.
+  }
+
+  loadBins();
+});
 
 loadBins();
 </script>
