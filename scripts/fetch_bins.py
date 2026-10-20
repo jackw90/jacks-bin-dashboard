@@ -30,16 +30,16 @@ def fetch_property(name, config):
     url = f"https://ukbinday.co.uk/api/v2/{council}/view/{uprn}"
 
     if name in ("mark", "clare"):
-    prefix = name.upper()
+        prefix = name.upper()
 
-    params = {
-        "postcode": os.environ[f"{prefix}_POSTCODE"],
-        "house_number": os.environ[f"{prefix}_HOUSE_NUMBER"],
-        "street": os.environ[f"{prefix}_STREET"],
-        "address": os.environ[f"{prefix}_ADDRESS"],
-    }
+        params = {
+            "postcode": os.environ[f"{prefix}_POSTCODE"],
+            "house_number": os.environ[f"{prefix}_HOUSE_NUMBER"],
+            "street": os.environ[f"{prefix}_STREET"],
+            "address": os.environ[f"{prefix}_ADDRESS"],
+        }
 
-    url += "?" + urlencode(params)
+        url += "?" + urlencode(params)
 
     request = urllib.request.Request(
         url,
@@ -90,7 +90,7 @@ def main():
 
         print(f"Saved {len(result['collections'])} collections for {name}")
 
-    # Keep Jack's original dashboard working
+    # Keep Jack's existing dashboard working
     Path("bins.json").write_text(
         (output_dir / "jack.json").read_text(encoding="utf-8"),
         encoding="utf-8",
