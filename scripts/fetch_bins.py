@@ -2,8 +2,8 @@
 import json
 import os
 import urllib.request
-from urllib.error import HTTPError
 from urllib.parse import urlencode
+from urllib.error import HTTPError
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -30,8 +30,13 @@ def fetch_property(name, config):
     url = f"https://ukbinday.co.uk/api/v2/{council}/view/{uprn}"
 
     if name == "mark":
-        postcode = os.environ["MARK_POSTCODE"]
-        url += "?" + urlencode({"postcode": postcode})
+        params = {
+            "postcode": os.environ["MARK_POSTCODE"],
+            "house_number": os.environ["MARK_HOUSE_NUMBER"],
+            "street": os.environ["MARK_STREET"],
+            "address": os.environ["MARK_ADDRESS"],
+        }
+        url += "?" + urlencode(params)
 
     request = urllib.request.Request(
         url,
@@ -40,16 +45,12 @@ def fetch_property(name, config):
 
     try:
         with urllib.request.urlopen(request, timeout=30) as response:
-           data = json.load(response)
+            data = json.load(response)
     except HTTPError as error:
-        print(f"{name}: API returned HTTP {error.code}")
-
-    # Show the response status, but not the body or request URL,
-    # which could contain private address information.
-    raise RuntimeError(
-        f"Bin collection lookup failed for {name} "
-        f"(HTTP {error.code})"
-    ) from None
+        raise RuntimeError(
+            f"Bin collection lookup failed for {name} "
+            f"(HTTP {error.code})"
+        ) from None
 
     if not isinstance(data.get("dates"), list):
         raise ValueError(f"No collection dates returned for {name}")
@@ -86,7 +87,7 @@ def main():
 
         print(f"Saved {len(result['collections'])} collections for {name}")
 
-    # Keep the original dashboard working with Jack's data
+    # Keep Jack's original dashboard working
     Path("bins.json").write_text(
         (output_dir / "jack.json").read_text(encoding="utf-8"),
         encoding="utf-8",
