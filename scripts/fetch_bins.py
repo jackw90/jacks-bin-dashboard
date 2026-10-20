@@ -5,25 +5,31 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
-# Brentwood Borough Council
-COUNCIL = "E07000068"
-API_BASE = f"https://ukbinday.co.uk/api/v2/{COUNCIL}/view"
-
-# Property names and corresponding GitHub secrets
 PROPERTIES = {
-    "jack": "JACK_UPRN",
-    "mark": "MARK_UPRN",
-    "clare": "CLARE_UPRN",
+    "jack": {
+        "council": "E07000068",
+        "secret": "JACK_UPRN",
+    },
+    "mark": {
+        "council": "E07000067",
+        "secret": "MARK_UPRN",
+    },
+    "clare": {
+        "council": "E07000070",
+        "secret": "CLARE_UPRN",
+    },
 }
 
 
-def fetch_property(name, secret_name):
-    uprn = os.environ[secret_name]
+def fetch_property(name, config):
+    uprn = os.environ[config["secret"]]
+    council = config["council"]
 
-    url = f"{API_BASE}/{uprn}"
+    url = f"https://ukbinday.co.uk/api/v2/{council}/view/{uprn}"
+
     request = urllib.request.Request(
         url,
-        headers={"User-Agent": "Jacks-Bin-Dashboard/1.0"}
+        headers={"User-Agent": "Jacks-Bin-Dashboard/1.0"},
     )
 
     with urllib.request.urlopen(request, timeout=30) as response:
@@ -53,28 +59,21 @@ def main():
     output_dir = Path("data")
     output_dir.mkdir(exist_ok=True)
 
-    for name, secret_name in PROPERTIES.items():
-        result = fetch_property(name, secret_name)
+    for name, config in PROPERTIES.items():
+        result = fetch_property(name, config)
 
         output = output_dir / f"{name}.json"
         output.write_text(
             json.dumps(result, indent=2) + "\n",
-            encoding="utf-8"
+            encoding="utf-8",
         )
 
-        print(
-            f"Saved {len(result['collections'])} "
-            f"collections to {output}"
-        )
+        print(f"Saved {len(result['collections'])} collections for {name}")
 
-    # Keep the existing dashboard working using Jack's collections
-    jack_data = (output_dir / "jack.json").read_text(
-        encoding="utf-8"
-    )
-
+    # Keep the original dashboard working with Jack's data
     Path("bins.json").write_text(
-        jack_data,
-        encoding="utf-8"
+        (output_dir / "jack.json").read_text(encoding="utf-8"),
+        encoding="utf-8",
     )
 
 
