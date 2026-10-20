@@ -44,7 +44,12 @@ def fetch_property(name, config):
             "street": os.environ[f"{prefix}_STREET"],
             "address": os.environ[f"{prefix}_ADDRESS"],
         }
-
+        
+    if name == "clare":
+        print("Clare parameter check:")
+        for key, value in params.items():
+            print(f"  {key}: {'present' if value.strip() else 'EMPTY'}")
+            
     url += "?" + urlencode(params)
 
     request = urllib.request.Request(
