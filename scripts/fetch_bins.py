@@ -7,6 +7,7 @@ from urllib.error import HTTPError
 from datetime import datetime, timezone
 from pathlib import Path
 
+
 PROPERTIES = {
     "jack": {
         "council": "E07000068",
@@ -27,14 +28,14 @@ def fetch_property(name, config):
     uprn = os.environ[config["secret"]]
     council = config["council"]
 
-    url = f"https://ukbinday.co.uk/api/v2/{council}/view/{uprn}"
-
-    
+    # Clare's browser request uses /view without the UPRN.
+    # Jack and Mark use /view/{uprn}.
     if name == "clare":
         url = f"https://ukbinday.co.uk/api/v2/{council}/view"
     else:
         url = f"https://ukbinday.co.uk/api/v2/{council}/view/{uprn}"
 
+    # Add address parameters for Mark and Clare.
     if name in ("mark", "clare"):
         prefix = name.upper()
 
@@ -44,22 +45,31 @@ def fetch_property(name, config):
             "street": os.environ[f"{prefix}_STREET"],
             "address": os.environ[f"{prefix}_ADDRESS"],
         }
-        
-    if name == "clare":
-        print("Clare parameter check:")
-        for key, value in params.items():
-            print(f"  {key}: {'present' if value.strip() else 'EMPTY'}")
-            
-    url += "?" + urlencode(params)
+
+        # Safe diagnostic: never print private address values.
+        if name == "clare":
+            print("Clare parameter check:", flush=True)
+
+            for key, value in params.items():
+                status = "present" if value.strip() else "EMPTY"
+                print(f"  {key}: {status}", flush=True)
+
+        url += "?" + urlencode(params)
 
     request = urllib.request.Request(
         url,
-        headers={"User-Agent": "Jacks-Bin-Dashboard/1.0"},
+        headers={
+            "User-Agent": "Jacks-Bin-Dashboard/1.0",
+        },
     )
 
     try:
-        with urllib.request.urlopen(request, timeout=30) as response:
+        with urllib.request.urlopen(
+            request,
+            timeout=30,
+        ) as response:
             data = json.load(response)
+
     except HTTPError as error:
         raise RuntimeError(
             f"Bin collection lookup failed for {name} "
@@ -67,7 +77,9 @@ def fetch_property(name, config):
         ) from None
 
     if not isinstance(data.get("dates"), list):
-        raise ValueError(f"No collection dates returned for {name}")
+        raise ValueError(
+            f"No collection dates returned for {name}"
+        )
 
     collections = [
         {
@@ -78,7 +90,9 @@ def fetch_property(name, config):
         for item in data["dates"]
     ]
 
-    collections.sort(key=lambda x: (x["date"], x["type"]))
+    collections.sort(
+        key=lambda item: (item["date"], item["type"])
+    )
 
     return {
         "updated": datetime.now(timezone.utc).isoformat(),
@@ -94,16 +108,23 @@ def main():
         result = fetch_property(name, config)
 
         output = output_dir / f"{name}.json"
+
         output.write_text(
             json.dumps(result, indent=2) + "\n",
             encoding="utf-8",
         )
 
-        print(f"Saved {len(result['collections'])} collections for {name}")
+        print(
+            f"Saved {len(result['collections'])} "
+            f"collections for {name}",
+            flush=True,
+        )
 
-    # Keep Jack's existing dashboard working
+    # Keep the original dashboard feed working.
     Path("bins.json").write_text(
-        (output_dir / "jack.json").read_text(encoding="utf-8"),
+        (output_dir / "jack.json").read_text(
+            encoding="utf-8"
+        ),
         encoding="utf-8",
     )
 
