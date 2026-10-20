@@ -2,6 +2,7 @@
 import json
 import os
 import urllib.request
+from urllib.error import HTTPError
 from urllib.parse import urlencode
 from datetime import datetime, timezone
 from pathlib import Path
@@ -37,8 +38,18 @@ def fetch_property(name, config):
         headers={"User-Agent": "Jacks-Bin-Dashboard/1.0"},
     )
 
-    with urllib.request.urlopen(request, timeout=30) as response:
-        data = json.load(response)
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+           data = json.load(response)
+    except HTTPError as error:
+        print(f"{name}: API returned HTTP {error.code}")
+
+    # Show the response status, but not the body or request URL,
+    # which could contain private address information.
+    raise RuntimeError(
+        f"Bin collection lookup failed for {name} "
+        f"(HTTP {error.code})"
+    ) from None
 
     if not isinstance(data.get("dates"), list):
         raise ValueError(f"No collection dates returned for {name}")
