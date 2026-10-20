@@ -45,7 +45,7 @@ def fetch_property(name, config):
             "address": os.environ[f"{prefix}_ADDRESS"],
         }
 
-        url += "?" + urlencode(params)
+    url += "?" + urlencode(params)
 
     request = urllib.request.Request(
         url,
