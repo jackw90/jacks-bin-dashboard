@@ -2,6 +2,7 @@
 import json
 import os
 import urllib.request
+from urllib.parse import urlencode
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -26,6 +27,10 @@ def fetch_property(name, config):
     council = config["council"]
 
     url = f"https://ukbinday.co.uk/api/v2/{council}/view/{uprn}"
+
+    if name == "mark":
+        postcode = os.environ["MARK_POSTCODE"]
+        url += "?" + urlencode({"postcode": postcode})
 
     request = urllib.request.Request(
         url,
