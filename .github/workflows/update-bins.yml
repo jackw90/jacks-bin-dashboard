@@ -31,12 +31,15 @@ jobs:
       - name: Fetch latest bin collections
         env:
           JACK_UPRN: ${{ secrets.JACK_UPRN }}
+          MARK_UPRN: ${{ secrets.MARK_UPRN }}
+          CLARE_UPRN: ${{ secrets.CLARE_UPRN }}
         run: python scripts/fetch_bins.py
 
       - name: Prepare website
         run: |
-          mkdir -p _site
+          mkdir -p _site/data
           cp index.html bins.json _site/
+          cp data/*.json _site/data/
           touch _site/.nojekyll
 
       - name: Configure GitHub Pages
