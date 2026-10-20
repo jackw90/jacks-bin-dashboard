@@ -29,15 +29,22 @@ def fetch_property(name, config):
 
     url = f"https://ukbinday.co.uk/api/v2/{council}/view/{uprn}"
 
-    if name in ("mark", "clare"):
-        prefix = name.upper()
+    if name == "clare":
+    url = f"https://ukbinday.co.uk/api/v2/{council}/view"
+    else:
+    url = f"https://ukbinday.co.uk/api/v2/{council}/view/{uprn}"
 
-        params = {
-            "postcode": os.environ[f"{prefix}_POSTCODE"],
-            "house_number": os.environ[f"{prefix}_HOUSE_NUMBER"],
-            "street": os.environ[f"{prefix}_STREET"],
-            "address": os.environ[f"{prefix}_ADDRESS"],
-        }
+    if name in ("mark", "clare"):
+    prefix = name.upper()
+
+    params = {
+        "postcode": os.environ[f"{prefix}_POSTCODE"],
+        "house_number": os.environ[f"{prefix}_HOUSE_NUMBER"],
+        "street": os.environ[f"{prefix}_STREET"],
+        "address": os.environ[f"{prefix}_ADDRESS"],
+    }
+
+    url += "?" + urlencode(params)
 
         url += "?" + urlencode(params)
 
