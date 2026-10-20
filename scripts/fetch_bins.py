@@ -27,13 +27,7 @@ PROPERTIES = {
 def fetch_property(name, config):
     uprn = os.environ[config["secret"]]
     council = config["council"]
-
-    # Clare's browser request uses /view without the UPRN.
-    # Jack and Mark use /view/{uprn}.
-    if name == "clare":
-        url = f"https://ukbinday.co.uk/api/v2/{council}/view"
-    else:
-        url = f"https://ukbinday.co.uk/api/v2/{council}/view/{uprn}"
+    url = f"https://ukbinday.co.uk/api/v2/{council}/view/{uprn}"
 
     # Add address parameters for Mark and Clare.
     if name in ("mark", "clare"):
