@@ -28,6 +28,7 @@ jobs:
         with:
           python-version: '3.12'
 
+     
       - name: Fetch latest bin collections
         env:
           JACK_UPRN: ${{ secrets.JACK_UPRN }}
@@ -37,6 +38,10 @@ jobs:
           MARK_STREET: ${{ secrets.MARK_STREET }}
           MARK_ADDRESS: ${{ secrets.MARK_ADDRESS }}
           CLARE_UPRN: ${{ secrets.CLARE_UPRN }}
+          CLARE_POSTCODE: ${{ secrets.CLARE_POSTCODE }}
+          CLARE_HOUSE_NUMBER: ${{ secrets.CLARE_HOUSE_NUMBER }}
+          CLARE_STREET: ${{ secrets.CLARE_STREET }}
+          CLARE_ADDRESS: ${{ secrets.CLARE_ADDRESS }}
         run: python scripts/fetch_bins.py
 
       - name: Prepare website
