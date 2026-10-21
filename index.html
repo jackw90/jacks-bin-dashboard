@@ -6,52 +6,65 @@
   <meta name="theme-color" content="#1b1a2b">
   <title>Jack's Bin Dashboard</title>
   <style>
-    :root { color-scheme:dark; --ink:#f5f5fb; --muted:#b3b2ca; --border:#45435e; --bg:#1b1a2b; --surface:#29283d; }
+    :root {
+      color-scheme: dark;
+      --ink:#f0f5fc; --muted:#a5b5c9; --border:#36485c;
+      --bg:#101722; --surface:#1c2735; --surface-2:#263448;
+      --accent:#77b8fa; --accent-text:#081827;
+      --hero-start:#243b55; --hero-end:#101722;
+      --hero-text:#f0f5fc; --hero-muted:#c1d1e5;
+      --input:#263448; --update:#263448;
+      --shadow:rgba(0,0,0,.18);
+    }
     * { box-sizing:border-box; }
     body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
-    .hero { background:linear-gradient(125deg,#35345b,#222139); border-bottom:1px solid #49466b; color:#fff; padding:38px 18px 82px; }
+    .hero { background:linear-gradient(125deg,var(--hero-start),var(--hero-end)); border-bottom:1px solid var(--border); color:var(--hero-text); padding:38px 18px 82px; }
     .wrap { width:min(100%,650px); margin:0 auto; }
     .brand { display:flex; align-items:center; gap:12px; }
-    .brand-icon { width:48px; height:48px; display:grid; place-items:center; border-radius:14px; background:#6264a744; border:1px solid #8b8de088; font-size:26px; }
+    .brand-icon { width:48px; height:48px; display:grid; place-items:center; border-radius:14px; background:var(--surface-2); border:1px solid var(--border); font-size:26px; }
     .eyebrow { font-size:11px; font-weight:800; letter-spacing:1.8px; text-transform:uppercase; }
-    .hero .eyebrow { color:#d5d3ff; }
+    .hero .eyebrow { color:var(--accent); }
     h1 { font-size:clamp(25px,5vw,34px); letter-spacing:-1px; margin:2px 0 0; }
-    .subtitle { color:#d0cfe3; margin:18px 0 0; font-size:14px; }
+    .subtitle { color:var(--hero-muted); margin:18px 0 0; font-size:14px; }
     main { margin-top:-57px !important; padding:0 16px 36px; position:relative; }
-    .card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:24px; margin-bottom:16px; box-shadow:0 12px 30px #00000029; }
-    .update-card { background:linear-gradient(120deg,#44416e,#343253); border:1px solid #7775bb; box-shadow:0 12px 35px #0005; }
-    .update-head { display:flex; align-items:center; gap:9px; color:#e1dfff; }
-    .dot { width:9px; height:9px; border-radius:50%; background:#a7a8ff; flex:none; box-shadow:0 0 0 4px #a7a8ff28; }
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:24px; margin-bottom:16px; box-shadow:0 12px 30px var(--shadow); }
+    .update-card { background:var(--update); border:1px solid var(--border); box-shadow:0 12px 35px var(--shadow); }
+    .update-head { display:flex; align-items:center; gap:9px; color:var(--accent); }
+    .dot { width:9px; height:9px; border-radius:50%; background:var(--accent); flex:none; }
     .update-time { font-size:clamp(16px,3.8vw,23px); letter-spacing:-.8px; font-weight:800; margin:12px 0 4px; font-variant-numeric:tabular-nums; }
     .update-date { display:none; }
-    .freshness { margin-top:12px; font-size:13px; color:#c9c7e8; }
-    .freshness.stale { color:#ffbf7e; font-weight:700; }
+    .freshness { margin-top:12px; font-size:13px; color:var(--muted); }
+    .freshness.stale { color:#e3a451; font-weight:700; }
     .row-head { display:flex; justify-content:space-between; gap:12px; align-items:center; }
-    .section-label { color:#c9c8e4; }
+    .section-label { color:var(--muted); }
     label { display:block; margin-bottom:10px; }
-    select { width:100%; background:#1f1e32; border:1px solid #69678c; border-radius:12px; padding:14px; color:var(--ink); font:inherit; font-weight:650; }
-    select:focus-visible { outline:3px solid #8b8de0; outline-offset:2px; }
+    select { width:100%; background:var(--input); border:1px solid var(--border); border-radius:12px; padding:14px; color:var(--ink); font:inherit; font-weight:650; }
+    select:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
     .next-date { font-size:clamp(25px,6vw,36px); font-weight:800; letter-spacing:-1px; margin:13px 0 7px; }
-    .countdown { display:inline-block; background:#393226; color:#e1dfff; font-size:13px; font-weight:800; border-radius:999px; padding:8px 12px; }
+    .countdown { display:inline-block; background:var(--surface-2); color:var(--accent); font-size:13px; font-weight:800; border-radius:999px; padding:8px 12px; }
     .countdown[hidden] { display:none; }
     .bins { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:23px; }
     .bin { min-height:117px; border-radius:15px; padding:13px 8px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; font-size:13px; font-weight:750; border:1px solid #ffffff25; }
     .bin-icon { display:grid; place-items:center; width:42px; height:42px; border-radius:12px; background:#ffffff24; }
     .bin-icon svg { width:29px; height:29px; display:block; }
-    .upcoming { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; padding:17px 0; border-bottom:1px solid #49466b; }
+    .upcoming { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; padding:17px 0; border-bottom:1px solid var(--border); }
     .upcoming:last-child { border:0; padding-bottom:0; }
     .upcoming strong { font-size:14px; }
     .upcoming-types { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
     .mini-bin { display:inline-flex; align-items:center; gap:6px; padding:5px 9px; border:1px solid #ffffff28; border-radius:9px; font-size:11px; font-weight:750; }
     .mini-bin svg { width:16px; height:16px; }
-    .small-badge { font-size:11px; font-weight:700; border-radius:999px; background:#42415e; color:#e4e2f6; padding:5px 9px; white-space:nowrap; }
+    .small-badge { font-size:11px; font-weight:700; border-radius:999px; background:var(--surface-2); color:var(--ink); padding:5px 9px; white-space:nowrap; }
     #status { text-align:center; font-size:12px; color:var(--muted); padding:6px; }
-    .error { color:#ff9a91 !important; }
+    .error { color:#e88c85 !important; }
     @media (max-width:380px) { .card { padding:19px; } .bins { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-    .notice { border-top:1px solid #7775bb77; margin-top:19px; padding-top:17px; }
-    .notice-title { display:flex; gap:9px; align-items:center; font-weight:800; color:#e1dfff; margin-bottom:7px; }
-    .notice p { margin:0; color:#d2d0e8; font-size:13px; line-height:1.6; }
-    .notice a { color:#e1dfff; }
+    .notice { border-top:1px solid var(--border); margin-top:19px; padding-top:17px; }
+    .notice-title { display:flex; gap:9px; align-items:center; font-weight:800; color:var(--accent); margin-bottom:7px; }
+    .notice p { margin:0; color:var(--muted); font-size:13px; line-height:1.6; }
+    .notice a { color:var(--accent); }
+    .selectors { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .selectors label { white-space:nowrap; }
+    @media(max-width:480px) { .selectors { grid-template-columns:1fr; } }
+
   </style>
 </head>
 <body>
@@ -66,12 +79,28 @@
 </header>
 <main class="wrap">
   <section class="card">
-    <label class="eyebrow section-label" for="property">SELECT PROPERTY</label>
-    <select id="property">
-      <option value="jack">Jack — Brentwood</option>
-      <option value="mark">Mark — Witham</option>
-      <option value="clare">Clare — Runwell</option>
-    </select>
+    <div class="selectors">
+      <div>
+        <label class="eyebrow section-label" for="property">SELECT PROPERTY</label>
+        <select id="property">
+          <option value="jack">Jack — Brentwood</option>
+          <option value="mark">Mark — Witham</option>
+          <option value="clare">Clare — Runwell</option>
+        </select>
+      </div>
+      <div>
+        <label class="eyebrow section-label" for="theme">COLOUR SCHEME</label>
+        <select id="theme">
+          <option value="midnight">Midnight Slate</option>
+          <option value="graphite">Graphite</option>
+          <option value="forest">Forest Night</option>
+          <option value="ocean">Deep Ocean</option>
+          <option value="espresso">Warm Espresso</option>
+          <option value="indigo">Soft Indigo</option>
+          <option value="white">White / Light Mode</option>
+        </select>
+      </div>
+    </div>
   </section>
   <section class="card update-card" aria-live="polite">
     <div class="update-head"><span class="dot" aria-hidden="true"></span><span class="eyebrow">LAST UPDATED</span></div>
@@ -95,6 +124,40 @@
   <div id="status" role="status">Loading collection data…</div>
 </main>
 <script>
+const themes = {
+  midnight: {bg:"#101722",surface:"#1c2735",surface2:"#263448",accent:"#77b8fa",ink:"#f0f5fc",muted:"#a5b5c9",border:"#36485c",heroStart:"#243b55",heroEnd:"#101722",heroMuted:"#c1d1e5",update:"#263448",shadow:"rgba(0,0,0,.18)",light:false},
+  graphite: {bg:"#141517",surface:"#242629",surface2:"#303338",accent:"#d0d5db",ink:"#f6f6f6",muted:"#b3b5bb",border:"#43464c",heroStart:"#303338",heroEnd:"#141517",heroMuted:"#c9cbd0",update:"#303338",shadow:"rgba(0,0,0,.2)",light:false},
+  forest: {bg:"#101b19",surface:"#1c2b27",surface2:"#273b34",accent:"#9ac9ac",ink:"#f0f6f1",muted:"#a7bcb1",border:"#40584d",heroStart:"#294538",heroEnd:"#101b19",heroMuted:"#b6d2bf",update:"#273b34",shadow:"rgba(0,0,0,.2)",light:false},
+  ocean: {bg:"#0c1923",surface:"#172c3a",surface2:"#234052",accent:"#66cbd2",ink:"#f0f8fa",muted:"#a4bec8",border:"#365769",heroStart:"#1c455a",heroEnd:"#0c1923",heroMuted:"#b1d0d9",update:"#234052",shadow:"rgba(0,0,0,.2)",light:false},
+  espresso: {bg:"#191612",surface:"#2b251f",surface2:"#3a3027",accent:"#e6b77d",ink:"#faf4ec",muted:"#c8b9a8",border:"#58493a",heroStart:"#463629",heroEnd:"#191612",heroMuted:"#dfcbb7",update:"#3a3027",shadow:"rgba(0,0,0,.2)",light:false},
+  indigo: {bg:"#151823",surface:"#242b3b",surface2:"#313c53",accent:"#a8baf9",ink:"#f2f3ff",muted:"#b3bdd6",border:"#48536c",heroStart:"#343e65",heroEnd:"#151823",heroMuted:"#c3cbed",update:"#313c53",shadow:"rgba(0,0,0,.2)",light:false},
+  white: {bg:"#f3f5f8",surface:"#ffffff",surface2:"#e9eef5",accent:"#3559a6",ink:"#172332",muted:"#54657b",border:"#d7dee9",heroStart:"#e5eaf8",heroEnd:"#f3f5f8",heroMuted:"#526783",update:"#eef2fc",shadow:"rgba(25,42,68,.08)",light:true}
+};
+const themeSelect = document.getElementById("theme");
+function applyTheme(name) {
+  const t = themes[name] || themes.midnight;
+  const root = document.documentElement;
+  const vars = {
+    "--bg":t.bg, "--surface":t.surface, "--surface-2":t.surface2,
+    "--accent":t.accent, "--ink":t.ink, "--muted":t.muted,
+    "--border":t.border, "--hero-start":t.heroStart,
+    "--hero-end":t.heroEnd, "--hero-text":t.ink,
+    "--hero-muted":t.heroMuted, "--input":t.surface2,
+    "--update":t.update, "--shadow":t.shadow
+  };
+  for (const [key,value] of Object.entries(vars)) root.style.setProperty(key,value);
+  root.style.colorScheme = t.light ? "light" : "dark";
+  document.querySelector('meta[name="theme-color"]').content = t.bg;
+}
+try {
+  const savedTheme = localStorage.getItem("selectedTheme");
+  if (Object.hasOwn(themes, savedTheme)) themeSelect.value = savedTheme;
+} catch (_) {}
+applyTheme(themeSelect.value);
+themeSelect.addEventListener("change", () => {
+  applyTheme(themeSelect.value);
+  try { localStorage.setItem("selectedTheme",themeSelect.value); } catch (_) {}
+});
 // Each category has its own colour and a locally rendered SVG illustration.
 // SVGs require no external image hosting and work on GitHub Pages.
 const icons = {
