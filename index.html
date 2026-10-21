@@ -1,316 +1,226 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101e35">
   <title>Jack's Bin Dashboard</title>
   <style>
+    :root { color-scheme: light; --navy:#101e35; --ink:#19283d; --muted:#63758c; --border:#e1e8f0; --bg:#f2f5fa; }
     * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      padding: 24px 16px;
-      background: #eef1f5;
-      color: #172332;
-      font-family: Arial, sans-serif;
-    }
-
-    main { max-width: 560px; margin: auto; }
-
-    h1 { margin: 4px 0 22px; font-size: 34px; }
-
-    .eyebrow {
-      font-size: 12px;
-      letter-spacing: 2px;
-      color: #64748b;
-      font-weight: bold;
-    }
-
-    .card {
-      background: white;
-      padding: 24px;
-      border-radius: 18px;
-      margin-bottom: 16px;
-      box-shadow: 0 3px 14px #1723320a;
-    }
-
-    .selector-label {
-      display: block;
-      margin-bottom: 10px;
-    }
-
-    select {
-      width: 100%;
-      padding: 13px 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      background: white;
-      color: #172332;
-      font: inherit;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    select:focus {
-      outline: 2px solid #3476d0;
-      outline-offset: 2px;
-    }
-
-    .date {
-      font-size: 27px;
-      font-weight: bold;
-      margin: 12px 0;
-    }
-
-    .muted { color: #64748b; font-size: 14px; }
-
-    .bins {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 22px;
-    }
-
-    .bin {
-      padding: 18px 8px;
-      border-radius: 12px;
-      color: white;
-      text-align: center;
-      font-weight: bold;
-      font-size: 13px;
-    }
-
-    .bin span {
-      display: block;
-      font-size: 27px;
-      margin-bottom: 9px;
-    }
-
-    .upcoming {
-      border-bottom: 1px solid #e2e8f0;
-      padding: 14px 0;
-    }
-
-    .upcoming:last-child { border: none; }
-
-    .upcoming strong {
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    #status { text-align: center; padding: 12px; }
-    .error { color: #b42318; }
+    body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    .hero { background:linear-gradient(125deg,#101e35,#243d61); color:#fff; padding:36px 18px 82px; }
+    .wrap { width:min(100%,650px); margin:0 auto; }
+    .brand { display:flex; align-items:center; gap:12px; }
+    .brand-icon { width:46px; height:46px; display:grid; place-items:center; border-radius:14px; background:#ffffff1a; font-size:25px; }
+    .eyebrow { font-size:11px; font-weight:800; letter-spacing:1.8px; text-transform:uppercase; }
+    .hero .eyebrow { color:#a8c3e6; }
+    h1 { font-size:clamp(25px,5vw,34px); letter-spacing:-1px; margin:2px 0 0; }
+    .subtitle { color:#bdcce0; margin:18px 0 0; font-size:14px; }
+    main { margin-top:-57px !important; padding:0 16px 36px; position:relative; }
+    .card { background:white; border:1px solid var(--border); border-radius:20px; padding:24px; margin-bottom:16px; box-shadow:0 8px 24px #13263b0a; }
+    .update-card { background:#fff; border:2px solid #bed4ec; }
+    .update-head { display:flex; align-items:center; gap:8px; color:#375b83; }
+    .dot { width:9px; height:9px; border-radius:50%; background:#3ba778; flex:none; }
+    .update-time { font-size:clamp(24px,6vw,34px); letter-spacing:-.8px; font-weight:800; margin:12px 0 4px; font-variant-numeric:tabular-nums; }
+    .update-date { font-size:15px; font-weight:600; color:#536780; }
+    .freshness { margin-top:12px; font-size:13px; color:#667991; }
+    .freshness.stale { color:#ad4e19; font-weight:700; }
+    .row-head { display:flex; justify-content:space-between; gap:12px; align-items:center; }
+    .section-label { color:#70829a; }
+    label { display:block; margin-bottom:10px; }
+    select { width:100%; background:#f8fafd; border:1px solid #cfdae7; border-radius:12px; padding:14px; color:var(--ink); font:inherit; font-weight:650; }
+    select:focus-visible { outline:3px solid #9ac5ff; outline-offset:2px; }
+    .next-date { font-size:clamp(25px,6vw,36px); font-weight:800; letter-spacing:-1px; margin:13px 0 7px; }
+    .countdown { display:inline-block; background:#e8f2ff; color:#235d9e; font-size:13px; font-weight:800; border-radius:999px; padding:8px 12px; }
+    .bins { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:23px; }
+    .bin { min-height:106px; border-radius:15px; padding:15px 8px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center; font-size:13px; font-weight:750; color:white; }
+    .bin-icon { font-size:29px; line-height:1.1; }
+    .upcoming { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; padding:17px 0; border-bottom:1px solid #edf1f5; }
+    .upcoming:last-child { border:0; padding-bottom:0; }
+    .upcoming strong { font-size:14px; }
+    .upcoming-types { margin-top:6px; color:var(--muted); font-size:13px; line-height:1.5; }
+    .small-badge { font-size:11px; font-weight:700; border-radius:999px; background:#eef3f8; color:#61738b; padding:5px 9px; white-space:nowrap; }
+    #status { text-align:center; font-size:12px; color:var(--muted); padding:6px; }
+    .error { color:#b42318 !important; }
+    @media (max-width:380px) { .card { padding:19px; } .bins { grid-template-columns:repeat(2,minmax(0,1fr)); } }
   </style>
 </head>
 <body>
-<main>
-  <div class="eyebrow">BIN COLLECTION DASHBOARD</div>
-  <h1>♻ Bin Day</h1>
-
+<header class="hero">
+  <div class="wrap">
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">♻️</div>
+      <div><div class="eyebrow">YOUR COLLECTION COMPANION</div><h1>Jack's Bin Dashboard</h1></div>
+    </div>
+    <p class="subtitle">Know what goes out, and when.</p>
+  </div>
+</header>
+<main class="wrap">
+  <section class="card update-card" aria-live="polite">
+    <div class="update-head"><span class="dot" aria-hidden="true"></span><span class="eyebrow">LAST UPDATED</span></div>
+    <div class="update-time" id="updatedTime">Loading…</div>
+    <div class="update-date" id="updatedDate">Checking collection data</div>
+    <div class="freshness" id="freshness"></div>
+  </section>
   <section class="card">
-    <label class="eyebrow selector-label" for="property">
-      SELECT PROPERTY
-    </label>
+    <label class="eyebrow section-label" for="property">SELECT PROPERTY</label>
     <select id="property">
       <option value="jack">Jack — Brentwood</option>
       <option value="mark">Mark — Witham</option>
       <option value="clare">Clare — Runwell</option>
     </select>
   </section>
-
   <section class="card">
-    <div class="eyebrow">NEXT COLLECTION</div>
-    <div class="date" id="nextDate">Loading...</div>
-    <div class="muted" id="countdown"></div>
+    <div class="eyebrow section-label">NEXT COLLECTION</div>
+    <div class="next-date" id="nextDate">Loading…</div>
+    <div id="countdown" class="countdown" hidden></div>
     <div class="bins" id="nextBins"></div>
   </section>
-
   <section class="card">
-    <div class="eyebrow">UPCOMING COLLECTIONS</div>
+    <div class="row-head"><div class="eyebrow section-label">UPCOMING COLLECTIONS</div><span class="small-badge">Next 4 dates</span></div>
     <div id="upcoming"></div>
   </section>
-
-  <div class="muted" id="status">Loading collection data...</div>
+  <div id="status" role="status">Loading collection data…</div>
 </main>
-
 <script>
 const binStyles = [
   ["Food Waste", "🍎", "#53954b", "Food"],
   ["Garden Waste", "🌿", "#347a40", "Garden"],
   ["Glass", "🍾", "#168b8c", "Glass"],
   ["Blue Sack", "📦", "#3476d0", "Blue Sack"],
-  ["White Sack", "♻", "#bd8c28", "White Sack"],
-  ["Refuse", "🗑", "#414b58", "Refuse"]
+  ["White Sack", "♻️", "#bd8c28", "White Sack"],
+  ["Refuse", "🗑️", "#414b58", "Refuse"]
 ];
-
 const propertySelect = document.getElementById("property");
-
 try {
   const saved = localStorage.getItem("selectedProperty");
-  if (["jack", "mark", "clare"].includes(saved)) {
-    propertySelect.value = saved;
-  }
-} catch (error) {
-  // The dashboard still works if storage is unavailable.
-}
+  if (["jack", "mark", "clare"].includes(saved)) propertySelect.value = saved;
+} catch (_) {}
 
 function getStyle(type) {
-  return binStyles.find(b => type.includes(b[0])) ||
-         ["", "🗑", "#64748b", type];
+  return binStyles.find(b => type.toLowerCase().includes(b[0].toLowerCase())) || ["", "🗑️", "#64748b", type];
 }
-
 function parseDate(s) {
-  const [y, m, d] = s.split("-").map(Number);
-  return new Date(y, m - 1, d);
+  const [year, month, day] = s.split("-").map(Number);
+  return new Date(year, month - 1, day);
 }
-
 function formatDate(s) {
-  return parseDate(s).toLocaleDateString("en-GB", {
-    weekday: "long",
-    day: "numeric",
-    month: "long"
-  });
+  return parseDate(s).toLocaleDateString("en-GB", {weekday:"long",day:"numeric",month:"long"});
 }
-
+function daysUntil(s) {
+  const target = parseDate(s);
+  const now = new Date();
+  return Math.round((Date.UTC(target.getFullYear(),target.getMonth(),target.getDate()) -
+    Date.UTC(now.getFullYear(),now.getMonth(),now.getDate())) / 86400000);
+}
 function renderBin(type) {
-  const b = getStyle(type);
+  const style = getStyle(type);
   const div = document.createElement("div");
   div.className = "bin";
-  div.style.background = b[2];
-
+  div.style.background = style[2];
   const icon = document.createElement("span");
-  icon.textContent = b[1];
-
-  div.append(icon, document.createTextNode(b[3]));
+  icon.className = "bin-icon";
+  icon.textContent = style[1];
+  const label = document.createElement("span");
+  label.textContent = style[3];
+  div.append(icon,label);
   return div;
 }
-
-let loadNumber = 0;
-
+function resetDisplay() {
+  document.getElementById("updatedTime").textContent = "Loading…";
+  document.getElementById("updatedDate").textContent = "Checking collection data";
+  document.getElementById("freshness").textContent = "";
+  document.getElementById("freshness").classList.remove("stale");
+  document.getElementById("nextDate").textContent = "Loading…";
+  document.getElementById("countdown").hidden = true;
+  document.getElementById("nextBins").replaceChildren();
+  document.getElementById("upcoming").replaceChildren();
+}
+let loadSequence = 0;
 async function loadBins() {
-  const currentLoad = ++loadNumber;
+  const sequence = ++loadSequence;
   const property = propertySelect.value;
   const status = document.getElementById("status");
-  const nextDate = document.getElementById("nextDate");
-  const countdown = document.getElementById("countdown");
-  const nextBins = document.getElementById("nextBins");
-  const upcoming = document.getElementById("upcoming");
-
+  resetDisplay();
   status.classList.remove("error");
-  status.textContent = "Loading collection data...";
-  nextDate.textContent = "Loading...";
-  countdown.textContent = "";
-  nextBins.replaceChildren();
-  upcoming.replaceChildren();
-
+  status.textContent = "Loading collection data…";
   try {
-    const response = await fetch(
-      "./data/" + property + ".json?cache=" + Date.now()
-    );
-
-    if (!response.ok) {
-      throw new Error("Cannot load collection data");
-    }
-
+    const response = await fetch(`./data/${property}.json?cache=${Date.now()}`, {cache:"no-store"});
+    if (!response.ok) throw new Error(`Could not load ${property}'s collection feed (HTTP ${response.status})`);
     const data = await response.json();
-
-    // Ignore older requests if the property changed.
-    if (currentLoad !== loadNumber) return;
-
-    if (!Array.isArray(data.collections)) {
-      throw new Error("Invalid collection data");
-    }
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const grouped = {};
-
-    for (const item of data.collections) {
-      if (parseDate(item.date) < today) continue;
-      (grouped[item.date] ??= []).push(item.type);
-    }
-
-    const dates = Object.keys(grouped).sort();
-
-    if (!dates.length) {
-      throw new Error("No future collection dates available");
-    }
-
-    const next = dates[0];
-
-    const days = Math.round(
-      (Date.UTC(
-        parseDate(next).getFullYear(),
-        parseDate(next).getMonth(),
-        parseDate(next).getDate()
-      ) - Date.UTC(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate()
-      )) / 86400000
-    );
-
-    nextDate.textContent = formatDate(next);
-
-    countdown.textContent =
-      days === 0 ? "Collection is today!" :
-      days === 1 ? "Collection is tomorrow!" :
-      days + " days to go";
-
-    nextBins.replaceChildren(
-      ...grouped[next].map(renderBin)
-    );
-
-    for (const date of dates.slice(1, 5)) {
-      const row = document.createElement("div");
-      row.className = "upcoming";
-
-      const heading = document.createElement("strong");
-      heading.textContent = formatDate(date);
-
-      const types = document.createElement("div");
-      types.className = "muted";
-      types.textContent = grouped[date].join(" · ");
-
-      row.append(heading, types);
-      upcoming.append(row);
-    }
+    if (sequence !== loadSequence) return;
+    if (!Array.isArray(data.collections)) throw new Error("Invalid collection data");
 
     const updated = new Date(data.updated);
+    if (!Number.isNaN(updated.getTime())) {
+      const timeOptions = {timeZone:"Europe/London",hour:"2-digit",minute:"2-digit",hour12:false};
+      const dateOptions = {timeZone:"Europe/London",weekday:"long",day:"numeric",month:"long",year:"numeric"};
+      document.getElementById("updatedTime").textContent = updated.toLocaleTimeString("en-GB",timeOptions) + " UK";
+      document.getElementById("updatedDate").textContent = updated.toLocaleDateString("en-GB",dateOptions);
+      const ageHours = (Date.now() - updated.getTime()) / 3600000;
+      const freshness = document.getElementById("freshness");
+      if (ageHours > 36) {
+        freshness.textContent = "⚠ Data is over 36 hours old — the automatic update may not have run.";
+        freshness.classList.add("stale");
+      } else {
+        freshness.textContent = "Latest successful data refresh";
+      }
+    } else {
+      document.getElementById("updatedTime").textContent = "Unknown";
+      document.getElementById("updatedDate").textContent = "No valid update timestamp in feed";
+    }
 
-    status.textContent = Number.isNaN(updated.getTime())
-      ? "Collection data loaded"
-      : "Schedule updated: " +
-        updated.toLocaleString("en-GB");
+    const grouped = {};
+    for (const item of data.collections) {
+      if (typeof item.date !== "string" || typeof item.type !== "string") continue;
+      if (daysUntil(item.date) < 0) continue;
+      (grouped[item.date] ??= []).push(item.type);
+    }
+    const dates = Object.keys(grouped).sort();
+    if (!dates.length) throw new Error("No future collection dates available");
+    const next = dates[0];
+    const days = daysUntil(next);
+    document.getElementById("nextDate").textContent = formatDate(next);
+    const countdown = document.getElementById("countdown");
+    countdown.hidden = false;
+    countdown.textContent = days === 0 ? "Collection is today!" : days === 1 ? "Collection is tomorrow!" : `${days} days to go`;
+    document.getElementById("nextBins").replaceChildren(...grouped[next].map(renderBin));
 
+    const upcoming = document.getElementById("upcoming");
+    for (const date of dates.slice(1,5)) {
+      const row = document.createElement("div");
+      row.className = "upcoming";
+      const details = document.createElement("div");
+      const heading = document.createElement("strong");
+      heading.textContent = formatDate(date);
+      const types = document.createElement("div");
+      types.className = "upcoming-types";
+      types.textContent = grouped[date].join(" · ");
+      details.append(heading,types);
+      const count = document.createElement("span");
+      count.className = "small-badge";
+      const remaining = daysUntil(date);
+      count.textContent = remaining === 1 ? "Tomorrow" : `${remaining} days`;
+      row.append(details,count);
+      upcoming.append(row);
+    }
+    status.textContent = "Collection dates loaded successfully";
   } catch (error) {
-    if (currentLoad !== loadNumber) return;
-
-    nextDate.textContent = "Schedule unavailable";
-    countdown.textContent = "";
-    nextBins.replaceChildren();
-    upcoming.replaceChildren();
+    if (sequence !== loadSequence) return;
+    document.getElementById("nextDate").textContent = "Schedule unavailable";
+    document.getElementById("updatedTime").textContent = "Unavailable";
+    document.getElementById("updatedDate").textContent = "Could not read update time";
     status.textContent = error.message;
     status.classList.add("error");
   }
 }
-
 propertySelect.addEventListener("change", () => {
-  try {
-    localStorage.setItem(
-      "selectedProperty",
-      propertySelect.value
-    );
-  } catch (error) {
-    // Saving the selection is optional.
-  }
-
+  try { localStorage.setItem("selectedProperty",propertySelect.value); } catch (_) {}
   loadBins();
 });
-
 loadBins();
+setInterval(loadBins, 30 * 60 * 1000);
 </script>
 </body>
 </html>
