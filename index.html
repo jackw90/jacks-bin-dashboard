@@ -48,7 +48,7 @@
     #status { text-align:center; font-size:12px; color:var(--muted); padding:6px; }
     .error { color:#ff9a91 !important; }
     @media (max-width:380px) { .card { padding:19px; } .bins { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-    .notice { background:#302e48; border:1px solid #5a5886; border-left:4px solid #9294ed; border-radius:14px; padding:16px 18px; margin-bottom:16px; }
+    .notice { border-top:1px solid #7775bb77; margin-top:19px; padding-top:17px; }
     .notice-title { display:flex; gap:9px; align-items:center; font-weight:800; color:#e1dfff; margin-bottom:7px; }
     .notice p { margin:0; color:#d2d0e8; font-size:13px; line-height:1.6; }
     .notice a { color:#e1dfff; }
@@ -77,11 +77,11 @@
     <div class="update-head"><span class="dot" aria-hidden="true"></span><span class="eyebrow">LAST UPDATED</span></div>
     <div class="update-time" id="updatedTime">Loading…</div>
     <div class="freshness" id="freshness"></div>
-  </section>
-  <aside class="notice" aria-label="Important information about collection dates">
+    <aside class="notice" aria-label="Important information about collection dates">
     <div class="notice-title"><span aria-hidden="true">⚠</span> Important information</div>
     <p>This is an unofficial dashboard and collection dates or waste types may be incorrect, incomplete or out of date. The dashboard <strong>tries to update daily at midnight (UK time)</strong>, but automatic updates are not guaranteed. It uses a GitHub Actions workflow to retrieve information from UK Bin Day and displays the saved results. The “Last updated” date shows when the data was fetched successfully, not when the council last changed its schedule. Please check your local council’s official information if you're unsure.</p>
-  </aside>
+    </aside>
+  </section>
   <section class="card">
     <div class="eyebrow section-label">NEXT COLLECTION</div>
     <div class="next-date" id="nextDate">Loading…</div>
