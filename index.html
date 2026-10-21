@@ -3,55 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#141414">
+  <meta name="theme-color" content="#1b1a2b">
   <title>Jack's Bin Dashboard</title>
   <style>
-    :root { color-scheme:dark; --ink:#f4f2ed; --muted:#aaa8a1; --border:#393936; --bg:#141414; --surface:#222220; }
+    :root { color-scheme:dark; --ink:#f5f5fb; --muted:#b3b2ca; --border:#45435e; --bg:#1b1a2b; --surface:#29283d; }
     * { box-sizing:border-box; }
     body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
-    .hero { background:linear-gradient(135deg,#252521,#171716); border-bottom:1px solid #393936; color:#fff; padding:38px 18px 82px; }
+    .hero { background:linear-gradient(125deg,#35345b,#222139); border-bottom:1px solid #49466b; color:#fff; padding:38px 18px 82px; }
     .wrap { width:min(100%,650px); margin:0 auto; }
     .brand { display:flex; align-items:center; gap:12px; }
-    .brand-icon { width:48px; height:48px; display:grid; place-items:center; border-radius:14px; background:#d6bc841c; border:1px solid #d6bc8455; font-size:26px; }
+    .brand-icon { width:48px; height:48px; display:grid; place-items:center; border-radius:14px; background:#6264a744; border:1px solid #8b8de088; font-size:26px; }
     .eyebrow { font-size:11px; font-weight:800; letter-spacing:1.8px; text-transform:uppercase; }
-    .hero .eyebrow { color:#d9c7a1; }
+    .hero .eyebrow { color:#d5d3ff; }
     h1 { font-size:clamp(25px,5vw,34px); letter-spacing:-1px; margin:2px 0 0; }
-    .subtitle { color:#bdbbb5; margin:18px 0 0; font-size:14px; }
+    .subtitle { color:#d0cfe3; margin:18px 0 0; font-size:14px; }
     main { margin-top:-57px !important; padding:0 16px 36px; position:relative; }
     .card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:24px; margin-bottom:16px; box-shadow:0 12px 30px #00000029; }
-    .update-card { background:linear-gradient(125deg,#34312b,#282724); border:1px solid #77694f; box-shadow:0 12px 35px #0005; }
-    .update-head { display:flex; align-items:center; gap:9px; color:#f0d9a8; }
-    .dot { width:9px; height:9px; border-radius:50%; background:#d9bc81; flex:none; box-shadow:0 0 0 4px #d9bc8120; }
-    .update-time { font-size:clamp(27px,6vw,37px); letter-spacing:-.8px; font-weight:800; margin:12px 0 4px; font-variant-numeric:tabular-nums; }
-    .update-date { font-size:15px; font-weight:600; color:#e6e0d5; }
-    .freshness { margin-top:12px; font-size:13px; color:#c5bda9; }
+    .update-card { background:linear-gradient(120deg,#44416e,#343253); border:1px solid #7775bb; box-shadow:0 12px 35px #0005; }
+    .update-head { display:flex; align-items:center; gap:9px; color:#e1dfff; }
+    .dot { width:9px; height:9px; border-radius:50%; background:#a7a8ff; flex:none; box-shadow:0 0 0 4px #a7a8ff28; }
+    .update-time { font-size:clamp(16px,3.8vw,23px); letter-spacing:-.8px; font-weight:800; margin:12px 0 4px; font-variant-numeric:tabular-nums; }
+    .update-date { display:none; }
+    .freshness { margin-top:12px; font-size:13px; color:#c9c7e8; }
     .freshness.stale { color:#ffbf7e; font-weight:700; }
     .row-head { display:flex; justify-content:space-between; gap:12px; align-items:center; }
-    .section-label { color:#c5c1b6; }
+    .section-label { color:#c9c8e4; }
     label { display:block; margin-bottom:10px; }
-    select { width:100%; background:#181817; border:1px solid #55524b; border-radius:12px; padding:14px; color:var(--ink); font:inherit; font-weight:650; }
-    select:focus-visible { outline:3px solid #d6bc84; outline-offset:2px; }
+    select { width:100%; background:#1f1e32; border:1px solid #69678c; border-radius:12px; padding:14px; color:var(--ink); font:inherit; font-weight:650; }
+    select:focus-visible { outline:3px solid #8b8de0; outline-offset:2px; }
     .next-date { font-size:clamp(25px,6vw,36px); font-weight:800; letter-spacing:-1px; margin:13px 0 7px; }
-    .countdown { display:inline-block; background:#393226; color:#f0d9a8; font-size:13px; font-weight:800; border-radius:999px; padding:8px 12px; }
+    .countdown { display:inline-block; background:#393226; color:#e1dfff; font-size:13px; font-weight:800; border-radius:999px; padding:8px 12px; }
     .countdown[hidden] { display:none; }
     .bins { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:23px; }
     .bin { min-height:117px; border-radius:15px; padding:13px 8px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; font-size:13px; font-weight:750; border:1px solid #ffffff25; }
     .bin-icon { display:grid; place-items:center; width:42px; height:42px; border-radius:12px; background:#ffffff24; }
     .bin-icon svg { width:29px; height:29px; display:block; }
-    .upcoming { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; padding:17px 0; border-bottom:1px solid #393936; }
+    .upcoming { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; padding:17px 0; border-bottom:1px solid #49466b; }
     .upcoming:last-child { border:0; padding-bottom:0; }
     .upcoming strong { font-size:14px; }
     .upcoming-types { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
     .mini-bin { display:inline-flex; align-items:center; gap:6px; padding:5px 9px; border:1px solid #ffffff28; border-radius:9px; font-size:11px; font-weight:750; }
     .mini-bin svg { width:16px; height:16px; }
-    .small-badge { font-size:11px; font-weight:700; border-radius:999px; background:#373630; color:#d5d1c7; padding:5px 9px; white-space:nowrap; }
+    .small-badge { font-size:11px; font-weight:700; border-radius:999px; background:#42415e; color:#e4e2f6; padding:5px 9px; white-space:nowrap; }
     #status { text-align:center; font-size:12px; color:var(--muted); padding:6px; }
     .error { color:#ff9a91 !important; }
     @media (max-width:380px) { .card { padding:19px; } .bins { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-    .notice { background:#292722; border:1px solid #6b5b3b; border-left:4px solid #d9bc81; border-radius:14px; padding:16px 18px; margin-bottom:16px; }
-    .notice-title { display:flex; gap:9px; align-items:center; font-weight:800; color:#f0d9a8; margin-bottom:7px; }
-    .notice p { margin:0; color:#d1ccc2; font-size:13px; line-height:1.6; }
-    .notice a { color:#f0d9a8; }
+    .notice { background:#302e48; border:1px solid #5a5886; border-left:4px solid #9294ed; border-radius:14px; padding:16px 18px; margin-bottom:16px; }
+    .notice-title { display:flex; gap:9px; align-items:center; font-weight:800; color:#e1dfff; margin-bottom:7px; }
+    .notice p { margin:0; color:#d2d0e8; font-size:13px; line-height:1.6; }
+    .notice a { color:#e1dfff; }
   </style>
 </head>
 <body>
@@ -65,16 +65,6 @@
   </div>
 </header>
 <main class="wrap">
-  <aside class="notice" aria-label="Important information about collection dates">
-    <div class="notice-title"><span aria-hidden="true">⚠</span> Please check before putting bins out</div>
-    <p>This is an unofficial dashboard. Collection dates and waste types may be incorrect, incomplete or out of date. It fetches information from UK Bin Day using a scheduled GitHub Actions job, then displays the saved results here. The “Last updated” time shows when that data was fetched — not when the council last changed its schedule. Always check your local council’s official collection information if you're unsure.</p>
-  </aside>
-  <section class="card update-card" aria-live="polite">
-    <div class="update-head"><span class="dot" aria-hidden="true"></span><span class="eyebrow">LAST UPDATED</span></div>
-    <div class="update-time" id="updatedTime">Loading…</div>
-    <div class="update-date" id="updatedDate">Checking collection data</div>
-    <div class="freshness" id="freshness"></div>
-  </section>
   <section class="card">
     <label class="eyebrow section-label" for="property">SELECT PROPERTY</label>
     <select id="property">
@@ -83,6 +73,15 @@
       <option value="clare">Clare — Runwell</option>
     </select>
   </section>
+  <section class="card update-card" aria-live="polite">
+    <div class="update-head"><span class="dot" aria-hidden="true"></span><span class="eyebrow">LAST UPDATED</span></div>
+    <div class="update-time" id="updatedTime">Loading…</div>
+    <div class="freshness" id="freshness"></div>
+  </section>
+  <aside class="notice" aria-label="Important information about collection dates">
+    <div class="notice-title"><span aria-hidden="true">⚠</span> Important information</div>
+    <p>This is an unofficial dashboard and collection dates or waste types may be incorrect, incomplete or out of date. The dashboard <strong>tries to update daily at midnight (UK time)</strong>, but automatic updates are not guaranteed. It uses a GitHub Actions workflow to retrieve information from UK Bin Day and displays the saved results. The “Last updated” date shows when the data was fetched successfully, not when the council last changed its schedule. Please check your local council’s official information if you're unsure.</p>
+  </aside>
   <section class="card">
     <div class="eyebrow section-label">NEXT COLLECTION</div>
     <div class="next-date" id="nextDate">Loading…</div>
@@ -196,7 +195,6 @@ function renderMiniBin(type) {
 }
 function resetDisplay() {
   document.getElementById("updatedTime").textContent = "Loading…";
-  document.getElementById("updatedDate").textContent = "Checking collection data";
   document.getElementById("freshness").textContent = "";
   document.getElementById("freshness").classList.remove("stale");
   document.getElementById("nextDate").textContent = "Loading…";
@@ -221,10 +219,8 @@ async function loadBins() {
 
     const updated = new Date(data.updated);
     if (!Number.isNaN(updated.getTime())) {
-      const timeOptions = {timeZone:"Europe/London",hour:"2-digit",minute:"2-digit",hour12:false};
-      const dateOptions = {timeZone:"Europe/London",weekday:"long",day:"numeric",month:"long",year:"numeric"};
-      document.getElementById("updatedTime").textContent = updated.toLocaleTimeString("en-GB",timeOptions) + " UK";
-      document.getElementById("updatedDate").textContent = updated.toLocaleDateString("en-GB",dateOptions);
+      const dateTimeOptions = {timeZone:"Europe/London",day:"numeric",month:"long",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:false};
+      document.getElementById("updatedTime").textContent = updated.toLocaleString("en-GB",dateTimeOptions) + " UK";
       const ageHours = (Date.now() - updated.getTime()) / 3600000;
       const freshness = document.getElementById("freshness");
       if (ageHours > 36) {
@@ -235,7 +231,6 @@ async function loadBins() {
       }
     } else {
       document.getElementById("updatedTime").textContent = "Unknown";
-      document.getElementById("updatedDate").textContent = "No valid update timestamp in feed";
     }
 
     const grouped = {};
@@ -277,7 +272,6 @@ async function loadBins() {
     if (sequence !== loadSequence) return;
     document.getElementById("nextDate").textContent = "Schedule unavailable";
     document.getElementById("updatedTime").textContent = "Unavailable";
-    document.getElementById("updatedDate").textContent = "Could not read update time";
     status.textContent = error.message;
     status.classList.add("error");
   }
